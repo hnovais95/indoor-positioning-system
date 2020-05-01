@@ -7,7 +7,7 @@ Os módulos ESP32 monitoram a presença de dispositivos BLE e reportam ao servio
 ## Servidor MQTT
 O broker Mosquitto recebe as informações das estações ES32 e as disponibiliza para os módulos externos realizarem a estimativa de posicionamento dos dispositivos BLE.
 
-###TODO
+### TODO
 * Implementar autodiagnóstico de estabilidade(tempuratura, frequência de perda das conexões e etc) nas estações ESP32
 * Implementar watchdog contra travamento e instabilidade das estações ES32
 * Implementar gerenciamento de energia com esp_sleep, visando autonomia das estações utilizando baterias
