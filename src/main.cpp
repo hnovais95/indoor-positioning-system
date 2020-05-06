@@ -19,7 +19,7 @@
 /*******************************************************************
 *   DEFINES
 *******************************************************************/
-#define SCAN_TIME 1
+#define SCAN_TIME 5
 
 /*******************************************************************
 *   TYPEDEFS
@@ -85,7 +85,6 @@ void setup()
 
 void loop()
 {
-  Serial.println("******************************INÍCIO*******************************");
   Serial.println("Devices found:");
   scanBeacons();
   
@@ -98,8 +97,7 @@ void loop()
   bool result = client.publish(mqttTopico, message.c_str(), true);
   Serial.print("PUB Result: ");
   Serial.println(result);
-  Serial.println("********************************FIM********************************");
-  Serial.println();
+  Serial.println("--\n");
 
   buffer.clear();
 }
