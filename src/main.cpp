@@ -14,19 +14,23 @@
 #include <BLEDevice.h>
 #include <BLEUtils.h>
 #include <BLEScan.h>
+#include <BLEBeacon.h>
 #include "Connectivity.h"
 
 /*******************************************************************
 *   DEFINES
 *******************************************************************/
 #define SCAN_TIME 5
+#define BEACON_UUID "16bffbc8-8ff8-11ea-bc55-0242ac130003"
+#define MQTT_TOPIC "teste/ble"
 
 /*******************************************************************
 *   TYPEDEFS
 *******************************************************************/
 /**
- * Struct with MAC Address and RSSI of beacon finded
-*/ 
+ * @brief Struct with MAC Address and RSSI of finded beacon
+ * 
+ */ 
 typedef struct {
   char address[17];  // ex.: 67:f1:d2:04:cd:5d
   int rssi = 0;
@@ -35,15 +39,31 @@ typedef struct {
 /*******************************************************************
 *   GLOBAL VARIABLES
 *******************************************************************/
+/**
+ * @brief Buffer of finded beacons
+ * 
+ */ 
 std::vector<BeaconData> buffer;
-char *mqttTopico = "teste/ble";
+/**
+ * @brief Advertising object
+ * 
+ */ 
+BLEAdvertising *pAdvertising;
 
 /*******************************************************************
 *   CLASSES
 *******************************************************************/
+/**
+ * @brief Define callback class
+ * 
+ */
 class MyAdvertisedDeviceCallbacks : public BLEAdvertisedDeviceCallbacks
 {
-  public:    
+  public:
+    /**
+     * @brief Callback function
+     * 
+     */
     void onResult(BLEAdvertisedDevice advertisedDevice)
     {
         extern std::vector<BeaconData> buffer;
@@ -57,8 +77,8 @@ class MyAdvertisedDeviceCallbacks : public BLEAdvertisedDeviceCallbacks
         buffer.push_back(beacon);
 
         // Print everything via serial port for debugging
+        Serial.printf("Name: %s \n", advertisedDevice.getName().c_str());
         Serial.printf("MAC: %s \n", advertisedDevice.getAddress().toString().c_str());
-        Serial.printf("name: %s \n", advertisedDevice.getName().c_str());
         Serial.printf("RSSI: %d \n\n", advertisedDevice.getRSSI());
     }
 };
@@ -66,10 +86,25 @@ class MyAdvertisedDeviceCallbacks : public BLEAdvertisedDeviceCallbacks
 /*******************************************************************
 *   LOCAL PROTOTYPES
 *******************************************************************/
+/**
+ * @brief Configure advertising
+ * 
+ */
+void setBeacon();
+/**
+ * @brief Start advertising
+ * 
+ */
+void startAdvertising();
+/**
+ * @brief Discover beacons
+ * 
+ */
 void scanBeacons();
 /**
- * Mount JSON message 
-*/ 
+ * @brief Mount JSON message
+ * 
+ */ 
 String mountMessage();
 
 /*******************************************************************
@@ -81,6 +116,7 @@ void setup()
   connectWiFi();
   connectMQTT();
   BLEDevice::init("");
+  startAdvertising();
 }
 
 void loop()
@@ -94,9 +130,9 @@ void loop()
 
   String message = mountMessage();
 
-  bool result = client.publish(mqttTopico, message.c_str(), true);
+  bool result = client.publish(MQTT_TOPIC, message.c_str(), true);
   Serial.print("PUB Result: ");
-  Serial.println(result);
+  Serial.println(result ? "Success!" : "Failed!");
   Serial.println("--\n");
 
   buffer.clear();
@@ -105,6 +141,48 @@ void loop()
 /*******************************************************************
 *   FUNCTIONS
 *******************************************************************/
+/**
+ * @brief Configure advertising
+ * 
+ */
+void setBeacon() 
+{
+  BLEBeacon oBeacon = BLEBeacon();
+  oBeacon.setManufacturerId(0x4C00); // fake Apple 0x004C LSB (ENDIAN_CHANGE_U16!)
+  oBeacon.setProximityUUID(BLEUUID(BEACON_UUID));
+  oBeacon.setMajor((1 & 0xFFFF0000) >> 16);
+  oBeacon.setMinor(1 & 0xFFFF);
+  BLEAdvertisementData oAdvertisementData = BLEAdvertisementData();
+  BLEAdvertisementData oScanResponseData = BLEAdvertisementData();
+  
+  oAdvertisementData.setFlags(0x04); // BR_EDR_NOT_SUPPORTED 0x04
+  oAdvertisementData.setName("ESP32-01");
+  
+  std::string strServiceData = "";
+  
+  strServiceData += (char)26;     // Len
+  strServiceData += (char)0xFF;   // Type
+  strServiceData += oBeacon.getData(); 
+  oAdvertisementData.addData(strServiceData);
+  
+  pAdvertising->setAdvertisementData(oAdvertisementData);
+  pAdvertising->setScanResponseData(oScanResponseData);
+}
+/**
+ * @brief Start advertising
+ * 
+ */
+void startAdvertising()
+{
+  pAdvertising = BLEDevice::getAdvertising();
+  setBeacon();   
+  pAdvertising->start(); // Start advertising
+  Serial.println("Advertizing started...");
+}
+/**
+ * @brief Discover beacons
+ * 
+ */
 void scanBeacons()
 {
   BLEScan *pBLEScan = BLEDevice::getScan(); //create new scan
@@ -116,12 +194,12 @@ void scanBeacons()
 
   // Stop BLE
   pBLEScan->stop();
-  Serial.println("Scan done!");
-  Serial.println();
+  //Serial.println("Scan done!");
+  //Serial.println();
 }
-
 /**
- * Mount JSON message 
+ * @brief Mount JSON message 
+ * @todo Minify message
 */ 
 String mountMessage()
 {
@@ -143,9 +221,9 @@ String mountMessage()
   }
   json += "\n]";  
   
-  Serial.print("Message:");
-  Serial.println(json);
-  Serial.println();
+  //Serial.print("Message:");
+  //Serial.println(json);
+  //Serial.println();
 
   return json;
 }

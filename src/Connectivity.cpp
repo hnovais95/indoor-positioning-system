@@ -38,12 +38,12 @@ void connectMQTT()
   Serial.println("Connecting to MQTT...");
   if (client.connect(mqttClient))
   {
-    Serial.println("connected");
+    Serial.println("Connected!");
   }
   else
   {
     Serial.print("failed with state ");
-    Serial.print(client.state());
+    Serial.println(client.state());
     delay(2000);
   }
 }
