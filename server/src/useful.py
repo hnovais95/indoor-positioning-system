@@ -1,0 +1,11 @@
+string = '{"beacons":['
+string += '{"nome":"beacon1","mac":"aa:bb:cc:dd:ee",'
+string += '"manufecturer":"espressif","rssi":-20,"tx_power":-30},'
+string += '{"nome":"beacon2","mac":"aa:bb:cc:dd:ff",'
+string += '"manufecturer":"espressif","rssi":-40,"tx_power":-30}'
+string += '],'
+string += '"station":{"nome":"station1","mac":"aa:bb:cc:dd:aa",'
+string += '"manufecturer":"espressif"}'
+string += '}'
+
+# '{"beacons":{"nome":"beacon1","mac":"aa:bb:cc:dd:ee","manufecturer":"espressif","rssi":-20,"tx_power":-30},"station":{"nome":"station1","mac":"aa:bb:cc:dd:aa","manufecturer":"espressif"}}'
