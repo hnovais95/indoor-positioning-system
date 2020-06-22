@@ -3,7 +3,7 @@ from typing import Optional
 
 class BLE:
     def __init__(self, name: str, mac: str, manufecturer: str,
-                 rssi: int = 0, tx_power: int = 0):
+                 rssi: int = None, tx_power: int = None):
         self._name = name
         self._mac = mac
         self._manufecturer = manufecturer
@@ -60,4 +60,4 @@ class BLE:
         self._location = value
 
     def __str__(self):
-        return f'Name: {self._name}  MAC: {self._mac}'
+        return f'Name: {self._name}  MAC: {self._mac}  Manufecturer: {self._manufecturer}  Location: {self._location}'

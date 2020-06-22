@@ -11,18 +11,27 @@ class Station(BLE):
     def parse(args: dict = None):
         if args is None:
             raise NotImplementedError()
-        station_attributes = vars(Station).keys()
-        dict_attributes = vars(args).keys()
+
+        station_attributes = list(vars(BLE).keys()) + \
+            list(vars(Station).keys())
+        dict_attributes = args.keys()
 
         is_station = True
         for atrribute in dict_attributes:
-            if atrribute[1:] not in station_attributes:
+            if atrribute not in station_attributes:
                 is_station = False
                 break
 
         if is_station:
-            return Station(args['nome'], args['mac'],
-                           args['manufecturer'])
+            st = Station(args['name'], args['mac'],
+                         args['manufecturer'])
+
+            for item in args['beacons_found']:
+                st.add_beacon(Beacon(
+                    item['name'], item['mac'], item['manufecturer'],
+                    item['rssi'], item['tx_power']))
+
+            return st
         else:
             return None
 
