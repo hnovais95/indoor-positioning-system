@@ -1,6 +1,3 @@
-from typing import Optional
-
-
 class BLE:
     def __init__(self, name: str, mac: str, manufecturer: str,
                  rssi: int = None, tx_power: int = None):
@@ -9,7 +6,6 @@ class BLE:
         self._manufecturer = manufecturer
         self._rssi = rssi
         self._tx_power = tx_power
-        self._location = None
 
     @property
     def name(self):
@@ -51,13 +47,6 @@ class BLE:
     def tx_power(self, value):
         self._tx_power = value
 
-    @property
-    def location(self) -> Optional[tuple]:
-        return self._location
-
-    @location.setter
-    def location(self, value):
-        self._location = value
-
     def __str__(self):
-        return f'Name: {self._name}  MAC: {self._mac}  Manufecturer: {self._manufecturer}  Location: {self._location}'
+        return f'Name: {self._name}  MAC: {self._mac}\
+              Manufecturer: {self._manufecturer}'

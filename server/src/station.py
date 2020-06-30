@@ -1,3 +1,4 @@
+from typing import Optional
 from ble import BLE
 from beacon import Beacon
 
@@ -6,27 +7,28 @@ class Station(BLE):
     def __init__(self, name: str, mac: str, manufecturer: str):
         super().__init__(name, mac, manufecturer)
         self._beacons_found: dict = {}
+        self._location = None
 
     @staticmethod
-    def parse(args: dict = None):
-        if args is None:
+    def parse(input: dict = None):
+        if input is None:
             raise NotImplementedError()
 
         station_attributes = list(vars(BLE).keys()) + \
             list(vars(Station).keys())
-        dict_attributes = args.keys()
+        input_attributes = input.keys()
 
         is_station = True
-        for atrribute in dict_attributes:
+        for atrribute in input_attributes:
             if atrribute not in station_attributes:
                 is_station = False
                 break
 
         if is_station:
-            st = Station(args['name'], args['mac'],
-                         args['manufecturer'])
+            st = Station(input['name'], input['mac'],
+                         input['manufecturer'])
 
-            for item in args['beacons_found']:
+            for item in input['beacons_found']:
                 st.add_beacon(Beacon(
                     item['name'], item['mac'], item['manufecturer'],
                     item['rssi'], item['tx_power']))
@@ -41,6 +43,14 @@ class Station(BLE):
     @property
     def beacons_found(self):
         return self._beacons_found
+
+    @property
+    def location(self) -> Optional[tuple]:
+        return self._location
+
+    @location.setter
+    def location(self, value):
+        self._location = value
 
     def calculate_distance(self, beacon_mac: str) -> float:
         # y = A * x ^ B + C

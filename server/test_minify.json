@@ -1,0 +1,1 @@
+{"name":"station1","mac":"aa:bb:cc:dd:aa","manufecturer":"espressif","beacons_found":[{"name":"beacon1","mac":"aa:bb:cc:dd:ee","manufecturer":"espressif","rssi":-20,"tx_power":-30},{"name":"beacon2","mac":"aa:bb:cc:dd:ff","manufecturer":"espressif","rssi":-30,"tx_power":-50}]}
