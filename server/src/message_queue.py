@@ -1,10 +1,11 @@
-import paho.mqtt.client as mqtt
-import json
 from station import Station
+from typing import Set, Dict
+import paho.mqtt.client as mqtt
 import useful
+import json
 
-beacons = set()
-stations = dict()
+beacons: Set[str] = set()
+stations: Dict[str, Station] = dict()
 
 
 def on_connect(client, userdata, flags, rc):
@@ -15,16 +16,26 @@ def on_connect(client, userdata, flags, rc):
 def on_message(client, userdata, msg):
     print("Message received-> " + msg.topic + " " + str(msg.payload))
     payload_contents = useful.get_payload_contents(msg.payload)
+    refresh(payload_contents)
 
-    message = json.loads(payload_contents)
-    st = Station.parse(message)
-    stations[st.mac] = st
 
-    for beacon_mac in st.beacons_found:
+def refresh(payload: str):
+    message = json.loads(payload)
+    station = Station.parse(message)
+    stations[station.mac] = station
+
+    for beacon_mac in station.beacons_found:
         beacons.add(beacon_mac)
 
-    print(f'Stations: {stations}')
-    print(f'Beacons: {beacons}')
+    for beacon_mac in beacons:
+        beacon_found = False
+        for station in stations.values():
+            if beacon_mac in station.beacons_found:
+                beacon_found = True
+                break
+
+        if beacon_found is False:
+            beacons.remove(beacon_mac)
 
 
 client = mqtt.Client()

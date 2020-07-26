@@ -10,25 +10,25 @@ class Station(BLE):
         self._location = None
 
     @staticmethod
-    def parse(input: dict = None):
-        if input is None:
+    def parse(msg: dict = None):
+        if msg is None:
             raise NotImplementedError()
 
         station_attributes = list(vars(BLE).keys()) + \
             list(vars(Station).keys())
-        input_attributes = input.keys()
+        msg_attributes = msg.keys()
 
         is_station = True
-        for atrribute in input_attributes:
+        for atrribute in msg_attributes:
             if atrribute not in station_attributes:
                 is_station = False
                 break
 
         if is_station:
-            st = Station(input['name'], input['mac'],
-                         input['manufecturer'])
+            st = Station(msg['name'], msg['mac'],
+                         msg['manufecturer'])
 
-            for item in input['beacons_found']:
+            for item in msg['beacons_found']:
                 st.add_beacon(Beacon(
                     item['name'], item['mac'], item['manufecturer'],
                     item['rssi'], item['tx_power']))
