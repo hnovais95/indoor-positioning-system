@@ -1,13 +1,14 @@
-from typing import Optional
 from ble import BLE
 from beacon import Beacon
+from location import Location
 
 
 class Station(BLE):
-    def __init__(self, name: str, mac: str, manufecturer: str):
+    def __init__(self, name: str, mac: str, manufecturer: str,
+                 location: Location):
         super().__init__(name, mac, manufecturer)
         self._beacons_found: dict = {}
-        self._location = None
+        self._location = location
 
     @staticmethod
     def parse(msg: dict = None):
@@ -26,7 +27,8 @@ class Station(BLE):
 
         if is_station:
             st = Station(msg['name'], msg['mac'],
-                         msg['manufecturer'])
+                         msg['manufecturer'],
+                         Location(msg['location']['x'], msg['location']['y']))
 
             for item in msg['beacons_found']:
                 st.add_beacon(Beacon(
@@ -45,27 +47,8 @@ class Station(BLE):
         return self._beacons_found
 
     @property
-    def location(self) -> Optional[tuple]:
+    def location(self) -> Location:
         return self._location
 
-    @location.setter
-    def location(self, value):
-        self._location = value
-
-    def calculate_distance(self, beacon_mac: str) -> float:
-        # y = A * x ^ B + C
-        a = 1.3173765600
-        b = 7.0280800100
-        c = -0.6409702466
-
-        beacon = self.beacons_found[beacon_mac]
-
-        if (beacon.rssi is None):
-            return -1.0
-
-        ratio = beacon.rssi * 1.0 / beacon.tx_power
-
-        if (ratio < 1.0):
-            return ratio ** 10
-        else:
-            return a * ratio ** b + c
+    def __str__(self):
+        return f'Station: {self._name}\nMAC: {self._mac}\nLocation: {self._location}'

@@ -33,3 +33,6 @@ class Beacon(BLE):
     @property
     def timestamp(self):
         return self._timestamp
+
+    def __str__(self):
+        return f'Beacon: {self._name}\nMAC: {self._mac}\nManufecturer: {self._manufecturer}'

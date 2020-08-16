@@ -48,5 +48,4 @@ class BLE:
         self._tx_power = value
 
     def __str__(self):
-        return f'Name: {self._name}  MAC: {self._mac}\
-              Manufecturer: {self._manufecturer}'
+        return f'Name: {self._name}\nMAC: {self._mac}\nManufecturer: {self._manufecturer}'
