@@ -12,4 +12,5 @@ class Location:
         return self._y
 
     def __str__(self):
-        return f'Location:\n\tX: {self._x}\n\tY: {self._y}'
+        # print("{:.2f}".format(a))
+        return "(X: {:.2f} Y: {:.2f})".format(self._x, self._y)

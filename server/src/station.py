@@ -51,4 +51,4 @@ class Station(BLE):
         return self._location
 
     def __str__(self):
-        return f'Station: {self._name}\nMAC: {self._mac}\nLocation: {self._location}'
+        return f'Station: {self._name} MAC: {self._mac} Location: {self._location}'

@@ -12,32 +12,26 @@ def trilateration() -> Optional[Dict[str, Location]]:
 
     for beacon_mac in on_site_beacons:
         beacon_links = get_beacon_links(links, beacon_mac)
-
         if len(beacon_links) > 2:
             shorter_links: List[Link] = get_shorter_links(beacon_links)
             d = []
             x = []
             y = []
-
             for link in shorter_links:
                 station = link.station
                 d.append(link.distance)
                 x.append(station.location.x)
                 y.append(station.location.y)
-
             A = np.array([[2*(x[0] - x[2]), 2*(y[0] - y[2])],
                           [(2*x[1] - x[2]), 2*(y[1] - y[2])]])
-
             b = np.array(
                 [x[0] ** 2 - x[2] ** 2 + y[0] ** 2 + d[2] ** 2 - d[0] ** 2,
                     x[1] ** 2 - x[2] ** 2 + y[1] ** 2 + d[2] ** 2 - d[1] ** 2])
-
             result = np.linalg.solve(A, b)
             location = Location(result[0], result[1])
-            print(f'[trilateration] Location: ({location.x}, {location.y}')
+            print(
+                f'[trilateration]  Beacon: {beacon_mac} Location: {location}')
             locations[beacon_mac] = location
-        else:
-            print('[trilateration] Number of links must be greater than 3.')
     return locations
 
 

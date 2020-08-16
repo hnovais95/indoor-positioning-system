@@ -28,9 +28,9 @@ def refresh_devices(payload: str):
 
 def show_devices():
     for station in on_site_stations.values():
-        print(f'[show_devices] {str(station)}')
-        print("[show_devices] Beacons found:")
+        print(f'[show_devices]  Station: {str(station)}')
+        print("\t\tBeacons found:")
         for beacon in station.beacons_found.values():
-            print(f'[show_devices] \t{str(beacon)}')
+            print(f'\t\t\t{str(beacon)}')
     t2 = threading.Timer(3.0, show_devices)
     t2.start()
