@@ -19,9 +19,9 @@ const char *password = "amazonas";
 /**
  * MQTT credentials
 */
-const char *mqttServer = "192.168.0.8";
+const char *mqttServer = "192.168.0.12";
 const uint16_t mqttPort = 1883;
-const char *mqttClient = "ESP32";
-char *mqttTopico = "teste/ble";
+const char *mqttClient = "ESP32-1";
+const char *mqttTopico = "test/topic/#";
 
 #endif
