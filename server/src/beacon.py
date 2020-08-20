@@ -3,9 +3,9 @@ from datetime import datetime
 
 
 class Beacon(BLE):
-    def __init__(self, name: str, mac: str, manufecturer: str,
+    def __init__(self, name: str, mac: str, manufacturer: str,
                  rssi: int = None, tx_power: int = None):
-        super().__init__(name, mac, manufecturer, rssi, tx_power)
+        super().__init__(name, mac, manufacturer, rssi, tx_power)
         self._timestamp = datetime.now()
 
     @staticmethod
@@ -25,7 +25,7 @@ class Beacon(BLE):
 
         if is_beacon:
             return Beacon(msg['name'], msg['mac'],
-                          msg['manufecturer'], msg['rssi'],
+                          msg['manufacturer'], msg['rssi'],
                           msg['tx_power'])
         else:
             return None
@@ -35,4 +35,4 @@ class Beacon(BLE):
         return self._timestamp
 
     def __str__(self):
-        return f'Beacon: {self._name} MAC: {self._mac} Manufecturer: {self._manufecturer}'
+        return f'Beacon: {self._name} MAC: {self._mac} Manufecturer: {self._manufacturer}'

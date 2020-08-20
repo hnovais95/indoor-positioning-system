@@ -13,6 +13,8 @@ def refresh_devices(payload: str):
     on_site_stations[station.mac] = station
 
     for beacon_mac in station.beacons_found:
+        if ('ESP32-' in beacon_mac):
+            continue
         on_site_beacons.add(beacon_mac)
 
     for beacon_mac in on_site_beacons:
@@ -28,7 +30,7 @@ def refresh_devices(payload: str):
 
 def show_devices():
     for station in on_site_stations.values():
-        print(f'[show_devices]  Station: {str(station)}')
+        print(f'[show_devices]  {str(station)}')
         print("\t\tBeacons found:")
         for beacon in station.beacons_found.values():
             print(f'\t\t\t{str(beacon)}')

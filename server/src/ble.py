@@ -1,9 +1,9 @@
 class BLE:
-    def __init__(self, name: str, mac: str, manufecturer: str,
+    def __init__(self, name: str, mac: str, manufacturer: str,
                  rssi: int = None, tx_power: int = None):
         self._name = name
         self._mac = mac
-        self._manufecturer = manufecturer
+        self._manufacturer = manufacturer
         self._rssi = rssi
         self._tx_power = tx_power
 
@@ -24,12 +24,12 @@ class BLE:
         self._mac = value
 
     @property
-    def manufecturer(self):
-        return self._manufecturer
+    def manufacturer(self):
+        return self._manufacturer
 
-    @manufecturer.setter
-    def manufecturer(self, value):
-        self._manufecturer = value
+    @manufacturer.setter
+    def manufacturer(self, value):
+        self._manufacturer = value
 
     @property
     def rssi(self):

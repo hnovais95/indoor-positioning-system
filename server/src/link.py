@@ -18,7 +18,7 @@ class Link:
     @property
     def distance(self) -> float:
         # y = A * x ^ B + C
-        a = 1.3173765600
+        """a = 1.3173765600
         b = 7.0280800100
         c = -0.6409702466
 
@@ -32,7 +32,11 @@ class Link:
         if (ratio < 1.0):
             return ratio ** 10
         else:
-            return a * ratio ** b + c
+            return a * ratio ** b + c"""
+        beacon: Beacon = self._station.beacons_found[self._beacon_mac]
+        measured_power = -55
+        n = 2
+        return 10**((measured_power - beacon.rssi) / (10**n))
 
     def __str__(self):
         return f'Link:\n\tStation: {self._station.mac}\n\tBeacon: {self._beacon_mac}\n\tDistance: {self.distance}'

@@ -11,7 +11,7 @@ def on_connect(client, userdata, flags, rc):
 
 
 def on_message(client, userdata, msg):
-    print(f'[on_message] {msg.topic} {str(msg.payload)}')
+    # print(f'[on_message] {msg.topic} {str(msg.payload)}')
     payload_contents = useful.get_payload_contents(msg.payload)
     common.refresh_devices(payload_contents)
     positioning.run()

@@ -41,6 +41,7 @@ def establish_links() -> List[Link]:
         for station in on_site_stations.values():
             if beacon_mac in station.beacons_found:
                 link = Link(station, beacon_mac)
+                print(f'[establish_links]  {str(link)}')
                 links.append(link)
     return links
 
