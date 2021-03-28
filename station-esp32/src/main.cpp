@@ -64,11 +64,11 @@ Location location;
 /**
    @brief Station name
 */
-const char* stationName = "station2";
+const char* stationName = "station1";
 /**
    @brief Advertising appearance name
 */
-const char* appearanceName = "ESP32-02";
+const char* appearanceName = "ESP32-01";
 /*******************************************************************
     CLASSES
 *******************************************************************/
@@ -109,18 +109,10 @@ class MyAdvertisedDeviceCallbacks : public BLEAdvertisedDeviceCallbacks
 
       // Print everything via serial port for debugging
       Serial.printf("Name: %s \n", advertisedDevice.getName().c_str());
-      Serial.printf("MAC: %s \n", advertisedDevice.getAddress().toString().c_str());
+      //Serial.printf("MAC: %s \n", advertisedDevice.getAddress().toString().c_str());
       Serial.printf("RSSI: %d \n", advertisedDevice.getRSSI());
-      Serial.printf("TXPower: %d \n", advertisedDevice.getTXPower());
+      //Serial.printf("TXPower: %d \n", advertisedDevice.getTXPower());
       //Serial.printf("ManufacturerData: %s \n", advertisedDevice.getManufacturerData());
-
-      int measuredPower = -55;
-      int n = 2;
-      float distance = pow(10, ((measuredPower - beacon.rssi) / pow(10, n)));
-      Serial.printf("Distance: ");
-      Serial.print(distance);
-      Serial.println("");
-      Serial.println("--");
     }
 };
 /*******************************************************************
@@ -151,6 +143,11 @@ void scanBeacons();
 
 */
 String mountMessage();
+/**
+   @brief Validade beacon
+
+*/
+bool validadeBeacon(BeaconData beacon);
 /*******************************************************************
     IMPLEMENTATION
 *******************************************************************/
@@ -259,20 +256,23 @@ String mountMessage()
   for (uint8_t i = 0; i < buffer.size(); i++)
   {
     BeaconData beacon = buffer.at(i);
-    json += "{";
-    json += "\"name\":\"";
-    json += String(beacon.name) + "\",";
-    json += "\"mac\":\"";
-    json += String(beacon.address) + "\",";
-    json += "\"manufacturer\":\"";
-    json += "\",";//String(beacon.manufacturer) + "\",";
-    json += "\"rssi\":";
-    json += String(beacon.rssi) + ",";
-    json += "\"tx_power\":";
-    json += String(beacon.txPower);
-    json += "}";
-    if (i < buffer.size() - 1)
-      json += ",";
+    if (validadeBeacon(beacon))
+    {
+      json += "{";
+      json += "\"name\":\"";
+      json += String(beacon.name) + "\",";
+      json += "\"mac\":\"";
+      json += String(beacon.address) + "\",";
+      json += "\"manufacturer\":\"";
+      json += String("samsung") + "\",";//"\",";//String(beacon.manufacturer) + "\",";
+      json += "\"rssi\":";
+      json += String(beacon.rssi) + ",";
+      json += "\"tx_power\":";
+      json += String(beacon.txPower);
+      json += "}";
+      if (i < buffer.size() - 1)
+        json += ",";
+    }
   }
   json += "]}";
   Serial.print("Message:");
@@ -281,3 +281,22 @@ String mountMessage()
 
   return json;
 }
+
+bool validadeBeacon(BeaconData beacon)
+{
+  if (sizeof(beacon.name) == 0) return false;
+  if (sizeof(beacon.address) == 0) return false;
+  if (sizeof(beacon.manufacturer) == 0) return false;
+  if (beacon.rssi > 0) return false;
+  return true;
+}
+
+/*
+ typedef struct {
+  char name[20];
+  char address[17];  // ex.: 67:f1:d2:04:cd:5d
+  int rssi = 0;
+  int txPower = 0;
+  char manufacturer[20];
+} BeaconData;
+ */
