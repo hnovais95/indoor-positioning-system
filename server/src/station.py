@@ -11,7 +11,7 @@ class Station(BLE):
         self._location = location
 
     @staticmethod
-    def parse(msg: dict = None):
+    def parse(msg: dict):
         if msg is None:
             raise NotImplementedError()
 
@@ -26,18 +26,23 @@ class Station(BLE):
                 break
 
         if is_station:
-            st = Station(msg['name'], msg['mac'],
+            station = Station(msg['name'], 
+                         msg['mac'],
                          msg['manufacturer'],
                          Location(msg['location']['x'], msg['location']['y']))
 
             for item in msg['beacons_found']:
-                if ('ESP32-' in item['name']):
+                if (item['name'].startswith('ESP32')):
                     continue
-                st.add_beacon(Beacon(
-                    item['name'], item['mac'], item['manufacturer'],
-                    item['rssi'], item['tx_power']))
+                
+                station.add_beacon(Beacon(
+                    item['name'], 
+                    item['mac'], 
+                    item['manufacturer'],
+                    item['rssi'], 
+                    item['tx_power']))
 
-            return st
+            return station
         else:
             return None
 
@@ -53,4 +58,5 @@ class Station(BLE):
         return self._location
 
     def __str__(self):
-        return f'Station: {self._name} MAC: {self._mac} Location: {self._location}'
+        # return f'Station: {self._name} MAC: {self._mac} Location: {self._location}'
+        return f'Station: {self._name} Location: {self._location}'
